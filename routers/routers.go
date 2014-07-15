@@ -19,8 +19,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/Unknwon/i18n"
 	"github.com/Unknwon/macaron"
+	"github.com/macaron-contrib/i18n"
 
 	"github.com/gogits/gogsweb/models"
 )

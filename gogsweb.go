@@ -21,11 +21,11 @@ import (
 	"strings"
 
 	"github.com/Unknwon/macaron"
+	"github.com/macaron-contrib/i18n"
 
 	"github.com/gogits/gogsweb/models"
 	"github.com/gogits/gogsweb/modules/base"
 	"github.com/gogits/gogsweb/modules/log"
-	"github.com/gogits/gogsweb/modules/middleware"
 	"github.com/gogits/gogsweb/modules/setting"
 	"github.com/gogits/gogsweb/routers"
 )
@@ -47,7 +47,7 @@ func main() {
 			"str2html": base.Str2html,
 		}},
 	}))
-	m.Use(middleware.I18n(middleware.LocaleOptions{
+	m.Use(i18n.I18n(i18n.LocaleOptions{
 		Langs:    setting.Langs,
 		Names:    setting.Names,
 		Redirect: true,
