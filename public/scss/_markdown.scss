@@ -1,0 +1,115 @@
+.markdown {
+	font-size: 14px;
+
+	pre {
+		background-color: #F8F8F8;
+		border: 1px solid #DDD;
+		font-size: 13px;
+		line-height: 19px;
+		overflow: auto;
+		padding: 6px 10px;
+		border-radius: 3px;
+
+		code {
+			margin: 0px;
+			padding: 0px;
+			background-color: transparent;
+			border: medium none;
+			word-wrap: normal;
+			max-width: initial;
+			display: inline;
+			overflow: initial;
+			line-height: inherit;
+		}
+	}
+
+	h1 {
+		font-size: 60px;
+	}
+
+	h2 {
+		font-size: 40px;
+		margin: 0 0 25px 0;
+		border-bottom: 1px solid #EEE;
+	}
+
+	h3 {
+		font-size: 30px;
+		margin: 15px 0px;
+	}
+
+	h4 {
+		font-size: 20px;
+		margin: 10px 0px;
+	}
+
+	a {
+		color: #4183C4;
+	}
+
+	table {
+		border-collapse: collapse;
+		border-spacing: 0px;
+		display: block;
+		overflow: auto;
+		width: 100%;
+		margin: 0px 0px 9px;
+
+		tr {
+			background-color: #FFF;
+			border: 1px solid #CCC;
+		}
+
+		td {
+			border: 1px solid #DDD;
+			padding: 6px 13px;
+		}
+	}
+}
+
+.docs-markdown {
+	.anchor-wrap {
+	  margin-top: -50px;
+	  padding-top: 50px;
+	}
+
+	h1 a.anchor,
+	h2 a.anchor,
+	h3 a.anchor,
+	h4 a.anchor,
+	h5 a.anchor,
+	h6 a.anchor {
+		text-decoration:none;
+		line-height:1;
+		padding-left:0;
+		margin-left:5px;
+		top:15%;
+	}
+
+	a span.octicon {
+	  font-size: 16px;
+	  font-family: "FontAwesome";
+	  line-height: 1;
+	  display: inline-block;
+	  text-decoration: none;
+	  -webkit-font-smoothing: antialiased;
+	}
+
+	a span.octicon-link {
+	  display: none;
+	  color: #000;
+	}
+
+	a span.octicon-link:before {
+	  content: "\f0c1";
+	}
+
+	h1:hover .octicon-link,
+	h2:hover .octicon-link,
+	h3:hover .octicon-link,
+	h4:hover .octicon-link,
+	h5:hover .octicon-link,
+	h6:hover .octicon-link {
+	  display:inline-block
+	}
+}

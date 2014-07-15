@@ -1,0 +1,54 @@
+{{template "base/head" .}}
+{{template "base/navbar" .}}
+{{define "docs"}}
+    {{with .Doc}}
+        {{range .Docs}}
+            <ul class="list-unstyled">
+                {{if .Name}}
+                    {{ if .IsDir}}
+                        <li class="group">
+                            <div class="section">
+                            {{if .HasContent}}
+                                <a class="{{if eq $.root.Doc.Link .Link}}active{{end}} item" href="/docs/{{.Link}}">{{.Name}}</a>
+                            {{else}}
+                                {{.Name}}
+                            {{end}}
+                            </div>
+                            {{template "docs" dict "root" $.root "Doc" .}}
+                        </li>
+                    {{else}}
+                        <li><a class="{{if eq $.root.Doc.Link .Link}}active{{end}} item" href="/docs/{{.Link}}.html">{{.Name}}</a></li>
+                    {{end}}
+                {{end}}
+            </ul>
+        {{end}}
+    {{end}}
+{{end}}
+
+<main>
+	<div class="grid-container">
+		<div class="grid-20 side-nav">
+			<!-- Sidebar navigation goes here -->
+			<div id="docs-collapse" class="collapse navbar-collapse docs-sidenav">
+                {{with .DocRoot.Doc}}
+                    {{if .HasContent}}
+                        <div class="section"><a class="{{if eq $.Doc.Link .Link}}active{{end}} item" href="/docs">{{.Name}}</a></div>
+                    {{end}}
+                    {{template "docs" dict "root" $ "Doc" .}}
+                {{end}}
+            </div>
+        </div>
+		<div class="grid-80">
+			<article class="content">
+				<div class="markdown docs-markdown">
+                        {{.Data|str2html}}
+                </div>
+			</article>
+	        <script type="text/javascript">
+	            var disqus_url = 'http://gogs.io/docs/' + '{{.Doc.Link}}?lang={{.Lang}}';
+	        </script>
+	        {{template "base/disqus" .}}
+		</div>
+	</div>
+</main>
+{{template "base/footer" .}}

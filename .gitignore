@@ -1,0 +1,10 @@
+.DS_Store
+gogsweb
+*.exe
+*.exe~
+config.codekit
+conf/docTree.json
+docs/
+.idea/
+.sass-cache
+conf/custom.ini
