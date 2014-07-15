@@ -15,6 +15,8 @@
 package routers
 
 import (
+	"io"
+	"os"
 	"strings"
 
 	"github.com/Unknwon/i18n"
@@ -30,7 +32,6 @@ func Home(ctx *macaron.Context) {
 
 func Docs(ctx *macaron.Context, locale i18n.Locale) {
 	docRoot := models.GetDocByLocale(locale.Lang)
-
 	if docRoot == nil {
 		ctx.Error(404)
 		return
@@ -39,6 +40,10 @@ func Docs(ctx *macaron.Context, locale i18n.Locale) {
 	link := strings.TrimPrefix(ctx.Params("all"), "/")
 	link = strings.TrimSuffix(link, ".html")
 	link = strings.TrimSuffix(link, ".md")
+	if strings.HasPrefix(link, "images") {
+		DocsStatic(ctx, locale, link)
+		return
+	}
 	ctx.Data["Link"] = "/docs/" + link
 
 	var doc *models.DocNode
@@ -61,6 +66,21 @@ func Docs(ctx *macaron.Context, locale i18n.Locale) {
 	ctx.Data["Title"] = doc.Name
 	ctx.Data["Data"] = doc.GetContent()
 	ctx.HTML(200, "document", ctx.Data)
+}
+
+func DocsStatic(ctx *macaron.Context, locale i18n.Locale, uri string) {
+	if len(uri) > 0 {
+		f, err := os.Open("docs/" + uri)
+		if err != nil {
+			return
+		}
+		defer f.Close()
+
+		_, err = io.Copy(ctx.ResponseWriter, f)
+		if err != nil {
+			return
+		}
+	}
 }
 
 func About(ctx *macaron.Context, locale i18n.Locale) {
