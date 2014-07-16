@@ -17,6 +17,7 @@ package routers
 import (
 	"io"
 	"os"
+	"path"
 	"strings"
 
 	"github.com/Unknwon/macaron"
@@ -37,13 +38,9 @@ func Docs(ctx *macaron.Context, locale i18n.Locale) {
 		return
 	}
 
-	link := strings.TrimPrefix(ctx.Params("all"), "/")
+	link := strings.TrimPrefix(ctx.Params("*"), "/")
 	link = strings.TrimSuffix(link, ".html")
 	link = strings.TrimSuffix(link, ".md")
-	if strings.HasPrefix(link, "images") {
-		DocsStatic(ctx, locale, link)
-		return
-	}
 	ctx.Data["Link"] = "/docs/" + link
 
 	var doc *models.DocNode
@@ -68,19 +65,26 @@ func Docs(ctx *macaron.Context, locale i18n.Locale) {
 	ctx.HTML(200, "document", ctx.Data)
 }
 
-func DocsStatic(ctx *macaron.Context, locale i18n.Locale, uri string) {
-	if len(uri) > 0 {
-		f, err := os.Open("docs/" + uri)
+func DocsStatic(ctx *macaron.Context) {
+	if len(ctx.Params(":all")) > 0 {
+		f, err := os.Open(path.Join("docs/images", ctx.Params(":all")))
 		if err != nil {
+			ctx.JSON(500, map[string]interface{}{
+				"error": err.Error(),
+			})
 			return
 		}
 		defer f.Close()
 
 		_, err = io.Copy(ctx.ResponseWriter, f)
 		if err != nil {
+			ctx.JSON(500, map[string]interface{}{
+				"error": err.Error(),
+			})
 			return
 		}
 	}
+	ctx.Error(404)
 }
 
 func About(ctx *macaron.Context, locale i18n.Locale) {

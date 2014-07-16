@@ -31,7 +31,7 @@ import (
 )
 
 const (
-	APP_VER = "0.1.0.0715"
+	APP_VER = "0.1.1.0716"
 )
 
 func main() {
@@ -56,7 +56,8 @@ func main() {
 	// Routers.
 	m.Get("/", routers.Home)
 	m.Get("/docs", routers.Docs)
-	m.Get("/docs/*all", routers.Docs)
+	m.Get("/docs/images/:all", routers.DocsStatic)
+	m.Get("/docs/*", routers.Docs)
 	m.Get("/about", routers.About)
 	m.Get("/team", routers.Team)
 	m.Get("/donate", routers.Donate)
