@@ -76,7 +76,7 @@ func DocsStatic(ctx *macaron.Context) {
 		}
 		defer f.Close()
 
-		_, err = io.Copy(ctx.ResponseWriter, f)
+		_, err = io.Copy(ctx.RW(), f)
 		if err != nil {
 			ctx.JSON(500, map[string]interface{}{
 				"error": err.Error(),
