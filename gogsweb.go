@@ -1,4 +1,4 @@
-// Copyright 2014 Unknown
+// Copyright 2014 Unknwon
 //
 // Licensed under the Apache License, Version 2.0 (the "License"): you may
 // not use this file except in compliance with the License. You may obtain
@@ -47,7 +47,7 @@ func main() {
 			"str2html": base.Str2html,
 		}},
 	}))
-	m.Use(i18n.I18n(i18n.LocaleOptions{
+	m.Use(i18n.I18n(i18n.Options{
 		Langs:    setting.Langs,
 		Names:    setting.Names,
 		Redirect: true,
