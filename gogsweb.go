@@ -30,9 +30,7 @@ import (
 	"github.com/gogits/gogsweb/routers"
 )
 
-const (
-	APP_VER = "0.1.1.0716"
-)
+const APP_VER = "0.1.2.0904"
 
 func main() {
 	log.Info("Gogs Web %s", APP_VER)
@@ -63,5 +61,7 @@ func main() {
 	m.Get("/donate", routers.Donate)
 
 	models.InitModels()
-	http.ListenAndServe("0.0.0.0:"+setting.HttpPort, m)
+	if err := http.ListenAndServe("0.0.0.0:"+setting.HttpPort, m); err != nil {
+		log.Fatal("Fail to start server: %v", err)
+	}
 }
