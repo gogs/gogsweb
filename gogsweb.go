@@ -30,10 +30,10 @@ import (
 	"github.com/gogits/gogsweb/routers"
 )
 
-const APP_VER = "0.1.2.0904"
+const APP_VER = "0.1.2.0905"
 
 func main() {
-	log.Info("Gogs Web %s", APP_VER)
+	log.Info("Gogs Web %s :%s", APP_VER, setting.HttpPort)
 	log.Info("Run Mode: %s", strings.Title(macaron.Env))
 
 	m := macaron.Classic()

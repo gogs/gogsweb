@@ -58,7 +58,7 @@ h2 {
     max-height: 400px;
     width: 100%;
     white-space: nowrap;
-    padding-top: 0;
+    padding: 0;
 }
 .carousel .images {
     overflow-x: auto;
@@ -67,7 +67,7 @@ h2 {
 }
 .carousel img {
     max-height: 400px;
-    margin-right: 20px;
+    margin-right: 5px;
     z-index: 1;
 }
 .carousel .fader {
