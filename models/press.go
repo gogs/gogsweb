@@ -27,7 +27,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/astaxie/beego"
+	"github.com/Unknwon/com"
 )
 
 type DocList []*DocNode
@@ -292,7 +292,7 @@ func (d *DocRoot) makeFileNode(path string) error {
 				case "name":
 					doc.Name = value
 				case "date":
-					doc.Date, err = beego.DateParse(value, "Y-m-d H:i")
+					doc.Date, err = com.DateParse(value, "Y-m-d H:i")
 					if err != nil {
 						return err
 					}

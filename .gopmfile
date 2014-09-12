@@ -1,0 +1,14 @@
+[target]
+path = github.com/gogits/gogsweb
+
+[deps]
+github.com/Unknwon/com = 
+github.com/Unknwon/goconfig = 
+github.com/Unknwon/macaron = 
+github.com/macaron-contrib/i18n = 
+github.com/robfig/cron = 
+github.com/slene/blackfriday = 
+
+[res]
+include = templates|public|conf
+
