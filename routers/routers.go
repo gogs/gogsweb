@@ -83,6 +83,7 @@ func DocsStatic(ctx *macaron.Context) {
 			})
 			return
 		}
+		return
 	}
 	ctx.Error(404)
 }
