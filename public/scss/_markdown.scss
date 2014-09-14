@@ -1,6 +1,5 @@
 .markdown {
 	font-size: 14px;
-
 	pre {
 		background-color: #F8F8F8;
 		border: 1px solid #DDD;
@@ -9,7 +8,6 @@
 		overflow: auto;
 		padding: 6px 10px;
 		border-radius: 3px;
-
 		code {
 			margin: 0px;
 			padding: 0px;
@@ -22,31 +20,25 @@
 			line-height: inherit;
 		}
 	}
-
 	h1 {
 		font-size: 60px;
 	}
-
 	h2 {
 		font-size: 40px;
 		margin: 0 0 25px 0;
 		border-bottom: 1px solid #EEE;
 	}
-
 	h3 {
 		font-size: 30px;
 		margin: 15px 0px;
 	}
-
 	h4 {
 		font-size: 20px;
 		margin: 10px 0px;
 	}
-
 	a {
 		color: #4183C4;
 	}
-
 	table {
 		border-collapse: collapse;
 		border-spacing: 0px;
@@ -54,16 +46,20 @@
 		overflow: auto;
 		width: 100%;
 		margin: 0px 0px 9px;
-
 		tr {
 			background-color: #FFF;
 			border: 1px solid #CCC;
 		}
-
 		td {
 			border: 1px solid #DDD;
 			padding: 6px 13px;
 		}
+	}
+	p img {
+		max-width: 99%;
+		height: auto;
+		margin: 0 auto;
+		display: block;
 	}
 }
 

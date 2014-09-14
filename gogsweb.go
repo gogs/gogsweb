@@ -30,7 +30,7 @@ import (
 	"github.com/gogits/gogsweb/routers"
 )
 
-const APP_VER = "0.1.2.0905"
+const APP_VER = "0.1.3.0913"
 
 func main() {
 	log.Info("Gogs Web %s :%s", APP_VER, setting.HttpPort)
