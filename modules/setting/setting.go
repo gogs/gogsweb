@@ -1,4 +1,4 @@
-// Copyright 2014 Unknown
+// Copyright 2014 Unknwon
 //
 // Licensed under the Apache License, Version 2.0 (the "License"): you may
 // not use this file except in compliance with the License. You may obtain
@@ -31,6 +31,9 @@ var (
 	Cfg *goconfig.ConfigFile
 
 	HttpPort     string
+	Https        bool
+	HttpsCert    string
+	HttpsKey     string
 	Langs, Names []string
 	GithubCred   string
 )
@@ -55,6 +58,9 @@ func init() {
 		macaron.Env = macaron.PROD
 	}
 	HttpPort = Cfg.MustValue("app", "http_port", "8091")
+	Https = Cfg.MustBool("app", "https")
+	HttpsCert = Cfg.MustValue("app", "https_cert")
+	HttpsKey = Cfg.MustValue("app", "https_key")
 
 	Langs = Cfg.MustValueArray("i18n", "langs", ",")
 	Names = Cfg.MustValueArray("i18n", "names", ",")

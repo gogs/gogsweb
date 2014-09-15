@@ -30,10 +30,10 @@ import (
 	"github.com/gogits/gogsweb/routers"
 )
 
-const APP_VER = "0.1.3.0913"
+const APP_VER = "0.1.4.0915"
 
 func main() {
-	log.Info("Gogs Web %s :%s", APP_VER, setting.HttpPort)
+	log.Info("Gogs Web %s", APP_VER)
 	log.Info("Run Mode: %s", strings.Title(macaron.Env))
 
 	m := macaron.Classic()
@@ -61,7 +61,20 @@ func main() {
 	m.Get("/donate", routers.Donate)
 
 	models.InitModels()
-	if err := http.ListenAndServe("0.0.0.0:"+setting.HttpPort, m); err != nil {
+
+	var err error
+	schema := "http"
+	if setting.Https {
+		schema = "https"
+	}
+	listenAddr := "0.0.0.0:" + setting.HttpPort
+	log.Info("Listen: %v://%s", schema, listenAddr)
+	if setting.Https {
+		err = http.ListenAndServeTLS(listenAddr, setting.HttpsCert, setting.HttpsKey, m)
+	} else {
+		err = http.ListenAndServe(listenAddr, m)
+	}
+	if err != nil {
 		log.Fatal("Fail to start server: %v", err)
 	}
 }
