@@ -61,6 +61,15 @@
 		margin: 0 auto;
 		display: block;
 	}
+	blockquote {
+		border-left: 4px solid #ddd;
+		margin-bottom: 16px;
+		p {
+			font-size: 14px;
+			padding: 5px 15px;
+			color: #777;
+		}
+	}
 }
 
 .docs-markdown {
