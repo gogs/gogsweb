@@ -1,0 +1,22 @@
+{{with .Doc}}
+    {{range .Docs}}
+        <ul class="list-unstyled">
+            {{if .Name}}
+                {{ if .IsDir}}
+                    <li class="group">
+                        <div class="section">
+                        {{if .HasContent}}
+                            <a class="{{if eq $.root.Doc.Link .Link}}active{{end}} item" href="/docs/{{.Link}}">{{.Name}}</a>
+                        {{else}}
+                            {{.Name}}
+                        {{end}}
+                        </div>
+                        {{template "base/docs" dict "root" $.root "Doc" .}}
+                    </li>
+                {{else}}
+                    <li><a class="{{if eq $.root.Doc.Link .Link}}active{{end}} item" href="/docs/{{.Link}}.html">{{.Name}}</a></li>
+                {{end}}
+            {{end}}
+        </ul>
+    {{end}}
+{{end}}

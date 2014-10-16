@@ -16,6 +16,7 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
 	"strings"
@@ -30,20 +31,19 @@ import (
 	"github.com/gogits/gogsweb/routers"
 )
 
-const APP_VER = "0.1.4.0915"
+const APP_VER = "0.2.0.1016"
 
-func main() {
-	log.Info("Gogs Web %s", APP_VER)
-	log.Info("Run Mode: %s", strings.Title(macaron.Env))
+var funcMap = map[string]interface{}{
+	"dict":     base.Dict,
+	"str2html": base.Str2html,
+}
 
+func newGogsInstance() *macaron.Macaron {
 	m := macaron.Classic()
 
 	// Middlewares.
 	m.Use(macaron.Renderer(macaron.RenderOptions{
-		Funcs: []template.FuncMap{map[string]interface{}{
-			"dict":     base.Dict,
-			"str2html": base.Str2html,
-		}},
+		Funcs: []template.FuncMap{funcMap},
 	}))
 	m.Use(i18n.I18n(i18n.Options{
 		Langs:    setting.Langs,
@@ -52,27 +52,76 @@ func main() {
 	}))
 
 	// Routers.
-	m.Get("/", routers.Home)
-	m.Get("/docs", routers.Docs)
-	m.Get("/docs/images/:all", routers.DocsStatic)
-	m.Get("/docs/*", routers.Docs)
+	m.Get("/", routers.GogsHome)
+	m.Get("/docs", routers.GogsDocs)
+	m.Get("/docs/images/:all", routers.GogsStatic)
+	m.Get("/docs/*", routers.GogsDocs)
 	m.Get("/about", routers.About)
 	m.Get("/team", routers.Team)
 	m.Get("/donate", routers.Donate)
 
+	return m
+}
+
+func newMacaronInstance() *macaron.Macaron {
+	m := macaron.Classic()
+
+	// Middlewares.
+	m.Use(macaron.Renderer(macaron.RenderOptions{
+		Funcs: []template.FuncMap{funcMap},
+	}))
+	m.Use(i18n.I18n(i18n.Options{
+		Langs:    setting.Langs,
+		Names:    setting.Names,
+		Redirect: true,
+	}))
+
+	// Routers.
+	m.Get("/", routers.MacaronDocs)
+	m.Get("/docs", routers.MacaronDocs)
+	m.Get("/docs/images/:all", routers.MacaronStatic)
+	m.Get("/docs/*", routers.MacaronDocs)
+
+	return m
+}
+
+func main() {
+	log.Info("Gogs Web %s", APP_VER)
+	log.Info("Run Mode: %s", strings.Title(macaron.Env))
+
 	models.InitModels()
 
+	m1 := newGogsInstance()
+	m2 := newMacaronInstance()
+	hs := macaron.NewHostSwitcher()
+	hs.Set("gogs.io", m1)
+	hs.Set("macaron.gogs.io", m2)
+
 	var err error
-	schema := "http"
-	if setting.Https {
-		schema = "https"
-	}
-	listenAddr := "0.0.0.0:" + setting.HttpPort
-	log.Info("Listen: %v://%s", schema, listenAddr)
-	if setting.Https {
-		err = http.ListenAndServeTLS(listenAddr, setting.HttpsCert, setting.HttpsKey, m)
+
+	// In dev mode, listen two ports just for convenience.
+	if macaron.Env == macaron.DEV {
+		// Gogs.
+		listenAddr := fmt.Sprintf("0.0.0.0:%d", setting.HttpPort)
+		log.Info("Listen: http://%s", listenAddr)
+		go http.ListenAndServe(listenAddr, m1)
+
+		// Macaron.
+		listenAddr = fmt.Sprintf("0.0.0.0:%d", setting.HttpPort+1)
+		log.Info("Listen: http://%s", listenAddr)
+		err = http.ListenAndServe(listenAddr, m2)
 	} else {
-		err = http.ListenAndServe(listenAddr, m)
+		schema := "http"
+		if setting.Https {
+			schema = "https"
+		}
+		listenAddr := fmt.Sprintf("0.0.0.0:%d", setting.HttpPort)
+		log.Info("Listen: %v://%s", schema, listenAddr)
+		if setting.Https {
+			err = http.ListenAndServeTLS(listenAddr, setting.HttpsCert, setting.HttpsKey, hs)
+		} else {
+			err = http.ListenAndServe(listenAddr, hs)
+		}
 	}
 	if err != nil {
 		log.Fatal("Fail to start server: %v", err)

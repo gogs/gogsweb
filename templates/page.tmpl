@@ -1,5 +1,5 @@
-{{template "base/head" .}}
-{{template "base/navbar" .}}
+{{template "gogs/head" .}}
+{{template "gogs/navbar" .}}
 <main>
 	<div class="grid-container">
 		<div class="grid-100">
@@ -11,8 +11,8 @@
 	        <script type="text/javascript">
 	            var disqus_url = 'http://gogs.io/docs/' + '{{.Doc.Link}}?lang={{.Lang}}';
 	        </script>
-	        {{template "base/disqus" .}}
+	        {{template "gogs/disqus" .}}
 		</div>
 	</div>
 </main>
-{{template "base/footer" .}}
+{{template "gogs/footer" .}}

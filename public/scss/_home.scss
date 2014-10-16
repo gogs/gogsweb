@@ -99,10 +99,8 @@ h2 {
         border: 1px solid #CCC;
         border-radius: 5px;
     }
-
     a:hover {
         text-decoration: none;
-
         img {
             border-color: #428BCA;
         }
@@ -136,5 +134,14 @@ h2 {
     }
     #promo-container {
         margin-left: 0;
+    }
+}
+.nav-macaron {
+    background: #191A1B;
+    a {
+        color: #FFFFFF;
+        &:hover {
+            color: #B6D1DD;
+        }
     }
 }

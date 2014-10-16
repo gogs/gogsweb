@@ -1,4 +1,4 @@
-// Copyright 2014 Unknown
+// Copyright 2014 Unknwon
 //
 // Licensed under the Apache License, Version 2.0 (the "License"): you may
 // not use this file except in compliance with the License. You may obtain
@@ -26,13 +26,34 @@ import (
 	"github.com/gogits/gogsweb/models"
 )
 
-func Home(ctx *macaron.Context) {
+func GogsHome(ctx *macaron.Context) {
 	ctx.Data["IsPageHome"] = true
-	ctx.HTML(200, "home", ctx.Data)
+	ctx.HTML(200, "home_gogs", ctx.Data)
 }
 
-func Docs(ctx *macaron.Context, locale i18n.Locale) {
-	docRoot := models.GetDocByLocale(locale.Lang)
+func About(ctx *macaron.Context, locale i18n.Locale) {
+	ctx.Data["Link"] = "/about"
+	df := models.GetDoc("gogs", "about", locale.Lang)
+	ctx.Data["Data"] = string(df.Data)
+	ctx.HTML(200, "page", ctx.Data)
+}
+
+func Team(ctx *macaron.Context, locale i18n.Locale) {
+	ctx.Data["Link"] = "/team"
+	df := models.GetDoc("gogs", "team", locale.Lang)
+	ctx.Data["Data"] = string(df.Data)
+	ctx.HTML(200, "page", ctx.Data)
+}
+
+func Donate(ctx *macaron.Context, locale i18n.Locale) {
+	ctx.Data["Link"] = "/donate"
+	df := models.GetDoc("gogs", "donate", locale.Lang)
+	ctx.Data["Data"] = string(df.Data)
+	ctx.HTML(200, "page", ctx.Data)
+}
+
+func docs(ctx *macaron.Context, locale i18n.Locale, name string) {
+	docRoot := models.GetDocByLocale(name, locale.Lang)
 	if docRoot == nil {
 		ctx.Error(404)
 		return
@@ -62,12 +83,16 @@ func Docs(ctx *macaron.Context, locale i18n.Locale) {
 	ctx.Data["Doc"] = doc
 	ctx.Data["Title"] = doc.Name
 	ctx.Data["Data"] = doc.GetContent()
-	ctx.HTML(200, "document", ctx.Data)
+	ctx.HTML(200, "document_"+name, ctx.Data)
 }
 
-func DocsStatic(ctx *macaron.Context) {
+func GogsDocs(ctx *macaron.Context, locale i18n.Locale) {
+	docs(ctx, locale, "gogs")
+}
+
+func docsStatic(ctx *macaron.Context, name string) {
 	if len(ctx.Params(":all")) > 0 {
-		f, err := os.Open(path.Join("docs/images", ctx.Params(":all")))
+		f, err := os.Open(path.Join("docs", name, "images", ctx.Params(":all")))
 		if err != nil {
 			ctx.JSON(500, map[string]interface{}{
 				"error": err.Error(),
@@ -88,23 +113,6 @@ func DocsStatic(ctx *macaron.Context) {
 	ctx.Error(404)
 }
 
-func About(ctx *macaron.Context, locale i18n.Locale) {
-	ctx.Data["Link"] = "/about"
-	df := models.GetDoc("about", locale.Lang)
-	ctx.Data["Data"] = string(df.Data)
-	ctx.HTML(200, "page", ctx.Data)
-}
-
-func Team(ctx *macaron.Context, locale i18n.Locale) {
-	ctx.Data["Link"] = "/team"
-	df := models.GetDoc("team", locale.Lang)
-	ctx.Data["Data"] = string(df.Data)
-	ctx.HTML(200, "page", ctx.Data)
-}
-
-func Donate(ctx *macaron.Context, locale i18n.Locale) {
-	ctx.Data["Link"] = "/donate"
-	df := models.GetDoc("donate", locale.Lang)
-	ctx.Data["Data"] = string(df.Data)
-	ctx.HTML(200, "page", ctx.Data)
+func GogsStatic(ctx *macaron.Context) {
+	docsStatic(ctx, "gogs")
 }

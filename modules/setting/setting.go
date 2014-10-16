@@ -30,7 +30,8 @@ const (
 var (
 	Cfg *goconfig.ConfigFile
 
-	HttpPort     string
+	Apps         []string
+	HttpPort     int
 	Https        bool
 	HttpsCert    string
 	HttpsKey     string
@@ -54,10 +55,12 @@ func init() {
 		}
 	}
 
+	Apps = Cfg.MustValueArray("", "apps", ",")
+
 	if Cfg.MustValue("app", "run_mode", "dev") == "prod" {
 		macaron.Env = macaron.PROD
 	}
-	HttpPort = Cfg.MustValue("app", "http_port", "8091")
+	HttpPort = Cfg.MustInt("app", "http_port", 8091)
 	Https = Cfg.MustBool("app", "https")
 	HttpsCert = Cfg.MustValue("app", "https_cert")
 	HttpsKey = Cfg.MustValue("app", "https_key")
@@ -65,6 +68,5 @@ func init() {
 	Langs = Cfg.MustValueArray("i18n", "langs", ",")
 	Names = Cfg.MustValueArray("i18n", "names", ",")
 
-	setGithubCredentials(Cfg.MustValue("github", "client_id"),
-		Cfg.MustValue("github", "client_secret"))
+	setGithubCredentials(Cfg.MustValue("github", "client_id"), Cfg.MustValue("github", "client_secret"))
 }

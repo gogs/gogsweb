@@ -36,7 +36,7 @@ import (
 )
 
 var (
-	docs = make(map[string]*DocRoot)
+	docs = make(map[string]map[string]*DocRoot)
 )
 
 type oldDocNode struct {
@@ -60,19 +60,21 @@ type docFile struct {
 }
 
 var (
-	docLock *sync.RWMutex
-	docMap  map[string]*docFile
+	docLock = &sync.RWMutex{}
+	docMaps = map[string]map[string]*docFile{}
 )
 
-func GetDocByLocale(lang string) *DocRoot {
-	return docs[lang]
+func GetDocByLocale(name, lang string) *DocRoot {
+	return docs[name][lang]
 }
 
 func InitModels() {
-	docLock = new(sync.RWMutex)
+	for _, name := range setting.Apps {
+		parseDocs(name)
+		initDocMap(name)
+	}
 
-	parseDocs()
-	initMaps()
+	return
 
 	c := cron.New()
 	c.AddFunc("0 */5 * * * *", checkFileUpdates)
@@ -85,23 +87,27 @@ func InitModels() {
 	}
 }
 
-func parseDocs() {
-	root, err := ParseDocs("docs/zh-CN")
+func parseDocs(name string) {
+	if docs[name] == nil {
+		docs[name] = make(map[string]*DocRoot)
+	}
+
+	root, err := ParseDocs(path.Join("docs", name, "zh-CN"))
 	if err != nil {
 		log.Error("Fail to parse docs: %v", err)
 	}
 
 	if root != nil {
-		docs["zh-CN"] = root
+		docs[name]["zh-CN"] = root
 	}
 
-	root, err = ParseDocs("docs/en-US")
+	root, err = ParseDocs(path.Join("docs", name, "en-US"))
 	if err != nil {
 		log.Error("Fail to parse docs: %v", err)
 	}
 
 	if root != nil {
-		docs["en-US"] = root
+		docs[name]["en-US"] = root
 	}
 }
 
@@ -112,46 +118,43 @@ func needCheckUpdate() bool {
 		return true
 	}
 
-	if !com.IsFile("conf/docTree.json") {
-		return true
+	for _, name := range setting.Apps {
+		if !com.IsFile("conf/docTree_" + name + ".json") {
+			return true
+		}
 	}
 
 	return time.Unix(stamp, 0).Add(5 * time.Minute).Before(time.Now())
 }
 
-func initDocMap() {
-	// Documentation names.
-	docNames := make([]string, 0)
-
-	isConfExist := com.IsFile("conf/docTree.json")
+func initDocMap(name string) {
+	treeName := "conf/docTree_" + name + ".json"
+	isConfExist := com.IsFile(treeName)
 	if isConfExist {
-		f, err := os.Open("conf/docTree.json")
+		f, err := os.Open(treeName)
 		if err != nil {
-			log.Error("Fail to open 'conf/docTree.json': %v", err)
+			log.Error("Fail to open '%s': %v", treeName, err)
 			return
 		}
 		defer f.Close()
 
 		d := json.NewDecoder(f)
 		if err = d.Decode(&docTree); err != nil {
-			log.Error("Fail to decode 'conf/docTree.json': %v", err)
+			log.Error("Fail to decode '%s': %v", treeName, err)
 			return
 		}
 	} else {
 		// Generate 'docTree'.
-		for _, v := range docNames {
-			docTree.Tree = append(docTree.Tree, oldDocNode{Path: v})
-		}
+		docTree.Tree = append(docTree.Tree, oldDocNode{Path: ""})
 	}
 
 	docLock.Lock()
 	defer docLock.Unlock()
 
-	docMap = make(map[string]*docFile)
+	docMap := make(map[string]*docFile)
 
-	os.Mkdir("docs", os.ModePerm)
 	for _, l := range setting.Langs {
-		os.Mkdir("docs/"+l, os.ModePerm)
+		os.MkdirAll(path.Join("docs", name, l), os.ModePerm)
 		for _, v := range docTree.Tree {
 			var fullName string
 			if isConfExist {
@@ -160,13 +163,11 @@ func initDocMap() {
 				fullName = l + "/" + v.Path
 			}
 
-			docMap[fullName] = getFile("docs/" + fullName)
+			docMap[fullName] = getFile(path.Join("docs", name, fullName))
 		}
 	}
-}
 
-func initMaps() {
-	initDocMap()
+	docMaps[name] = docMap
 }
 
 // loadFile returns []byte of file data by given path.
@@ -243,8 +244,8 @@ func getFile(filePath string) *docFile {
 }
 
 // GetDoc returns 'docFile' by given name and language version.
-func GetDoc(fullName, lang string) *docFile {
-	filePath := "docs/" + lang + "/" + fullName
+func GetDoc(app, fullName, lang string) *docFile {
+	filePath := path.Join("docs", app, lang, fullName)
 
 	if macaron.Env == macaron.DEV {
 		return getFile(filePath)
@@ -252,7 +253,7 @@ func GetDoc(fullName, lang string) *docFile {
 
 	docLock.RLock()
 	defer docLock.RUnlock()
-	return docMap[lang+"/"+fullName]
+	return docMaps[app][lang+"/"+fullName]
 }
 
 var checkTicker *time.Ticker
@@ -293,12 +294,19 @@ func checkFileUpdates() {
 		ApiUrl, RawUrl, TreeName, Prefix string
 	}
 
+	// FIXME: make this configurable.
 	var trees = []*tree{
 		{
 			ApiUrl:   "https://api.github.com/repos/gogits/docs/git/trees/master?recursive=1&" + setting.GithubCred,
 			RawUrl:   "https://raw.github.com/gogits/docs/master/",
-			TreeName: "conf/docTree.json",
-			Prefix:   "docs/",
+			TreeName: "conf/docTree_gogs.json",
+			Prefix:   "docs/gogs/",
+		},
+		{
+			ApiUrl:   "https://api.github.com/repos/macaron-contrib/docs/git/trees/master?recursive=1&" + setting.GithubCred,
+			RawUrl:   "https://raw.github.com/macaron-contrib/docs/master/",
+			TreeName: "conf/docTree_macaron.json",
+			Prefix:   "docs/macaron/",
 		},
 	}
 
@@ -391,8 +399,10 @@ func checkFileUpdates() {
 	}
 
 	log.Debug("Finish check file updates")
-	parseDocs()
-	initMaps()
+	for _, name := range setting.Apps {
+		parseDocs(name)
+		initDocMap(name)
+	}
 }
 
 // checkSHA returns true if the documentation file need to update.
@@ -401,8 +411,7 @@ func checkSHA(name, sha, prefix string) bool {
 		Tree []oldDocNode
 	}
 
-	switch prefix {
-	case "docs/":
+	if strings.HasPrefix(prefix, "docs/") {
 		tree = docTree
 	}
 

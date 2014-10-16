@@ -1,7 +1,18 @@
 Gogs Web
-=======
+========
 
-An open source project for official documentation website of Gogs.
+An open source project for official documentation website of [Gogs](http://gogs.io) and [Macaron](http://macaron.gogs.io).
+
+## Introduction
+
+As a study example of [Macaron](http://macaron.gogs.io) framework, this project has following features to show you:
+
+- Multiple sites in one program.
+- TODO
+
+## Configuration
+
+TODO
 
 ## License
 

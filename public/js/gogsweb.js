@@ -15,6 +15,9 @@ $(document).ready(function () {
         document.location.href = this.options[this.selectedIndex].value;
     });
 
+    // Render code blocks.
+    $('.markdown').find('pre > code').parent().addClass('prettyprint');
+    prettyPrint();
 
     // Encode url.
     var $doc = $('.docs-markdown');

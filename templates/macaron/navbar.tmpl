@@ -1,0 +1,19 @@
+<nav class="nav-macaron" {{if not .IsPageHome}}style="text-align: left;"{{end}}>
+	<div class="grid-container">
+		<div class="grid-100">
+			<img src="/imgs/macaron.png" id="logo" {{if not .IsPageHome}}style="display: inline;"{{end}}>
+			<a href="javascript:" id="menu-link"><i class="fa fa-bars"></i> {{.i18n.Tr "menu"}}</a>
+			<select size="1" id="lang">
+				{{range .AllLangs}}
+				<option value="{{$.Link}}?lang={{.Lang}}" {{if eq .Lang $.i18n.Lang}}selected{{end}}>{{.Name}}</option>
+				{{end}}
+			</select>
+
+			<div id="wide-nav">
+				<a href="/docs">{{.i18n.Tr "docs"}}</a>
+				<a href="http://{{if eq .i18n.Lang "zh-CN"}}wuwen.org{{else}}obahua.com{{end}}">{{.i18n.Tr "blog"}}</a>
+				<a href="https://github.com/Unknwon/macaron/"><i class="fa fa-github fa-lg"></i><span class="hide-on-wide">&nbsp; GitHub</span></a>
+			</div>
+		</div>
+	</div>
+</nav>

@@ -1,5 +1,5 @@
-{{template "base/head" .}}
-{{template "base/navbar" .}}
+{{template "gogs/head" .}}
+{{template "gogs/navbar" .}}
 <main>
 	<section id="promo-area">
 		<div class="grid-container">
@@ -7,7 +7,7 @@
 				<img src="/imgs/gogs-lg.png" id="home-logo">
 				<div id="promo-container">
 					<h1>Gogs</h1>
-					<h2>{{.i18n.Tr "app_desc"}}</h2>
+					<h2>{{.i18n.Tr "gogs_desc"}}</h2>
 					<a href="/docs/installation" class="button darkblue"><i class="fa fa-download"></i>&nbsp; {{.i18n.Tr "download"}}</a>
 					<a href="https://try.gogs.io" class="button green">{{.i18n.Tr "try_demo"}} &raquo;</a>
 
@@ -146,4 +146,4 @@
 		</div>
 	</section>
 </main>
-{{template "base/footer" .}}
+{{template "gogs/footer" .}}
