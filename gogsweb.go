@@ -23,6 +23,7 @@ import (
 
 	"github.com/Unknwon/macaron"
 	"github.com/macaron-contrib/i18n"
+	"github.com/macaron-contrib/switcher"
 
 	"github.com/gogits/gogsweb/models"
 	"github.com/gogits/gogsweb/modules/base"
@@ -31,7 +32,7 @@ import (
 	"github.com/gogits/gogsweb/routers"
 )
 
-const APP_VER = "0.2.1.1017"
+const APP_VER = "0.2.2.1017"
 
 var funcMap = map[string]interface{}{
 	"dict":     base.Dict,
@@ -93,7 +94,7 @@ func main() {
 
 	m1 := newGogsInstance()
 	m2 := newMacaronInstance()
-	hs := macaron.NewHostSwitcher()
+	hs := switcher.NewHostSwitcher()
 	hs.Set("gogs.io", m1)
 	hs.Set("macaron.gogs.io", m2)
 
