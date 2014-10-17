@@ -27,10 +27,15 @@ const (
 	CFG_CUSTOM_PATH = "conf/custom.ini"
 )
 
+type App struct {
+	Name     string
+	RepoName string
+}
+
 var (
 	Cfg *goconfig.ConfigFile
 
-	Apps         []string
+	Apps         []App
 	HttpPort     int
 	Https        bool
 	HttpsCert    string
@@ -55,7 +60,11 @@ func init() {
 		}
 	}
 
-	Apps = Cfg.MustValueArray("", "apps", ",")
+	appNames := Cfg.MustValueArray("", "apps", ",")
+	Apps = make([]App, len(appNames))
+	for i, name := range appNames {
+		Apps[i] = App{name, Cfg.MustValue(name, "repo_name")}
+	}
 
 	if Cfg.MustValue("app", "run_mode", "dev") == "prod" {
 		macaron.Env = macaron.PROD

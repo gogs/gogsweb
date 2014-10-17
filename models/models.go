@@ -1,4 +1,4 @@
-// Copyright 2014 Unknown
+// Copyright 2014 Unknwon
 //
 // Licensed under the Apache License, Version 2.0 (the "License"): you may
 // not use this file except in compliance with the License. You may obtain
@@ -69,9 +69,9 @@ func GetDocByLocale(name, lang string) *DocRoot {
 }
 
 func InitModels() {
-	for _, name := range setting.Apps {
-		parseDocs(name)
-		initDocMap(name)
+	for _, app := range setting.Apps {
+		parseDocs(app.Name)
+		initDocMap(app.Name)
 	}
 
 	return
@@ -118,8 +118,8 @@ func needCheckUpdate() bool {
 		return true
 	}
 
-	for _, name := range setting.Apps {
-		if !com.IsFile("conf/docTree_" + name + ".json") {
+	for _, app := range setting.Apps {
+		if !com.IsFile("conf/docTree_" + app.Name + ".json") {
 			return true
 		}
 	}
@@ -294,21 +294,29 @@ func checkFileUpdates() {
 		ApiUrl, RawUrl, TreeName, Prefix string
 	}
 
-	// FIXME: make this configurable.
-	var trees = []*tree{
-		{
-			ApiUrl:   "https://api.github.com/repos/gogits/docs/git/trees/master?recursive=1&" + setting.GithubCred,
-			RawUrl:   "https://raw.github.com/gogits/docs/master/",
-			TreeName: "conf/docTree_gogs.json",
-			Prefix:   "docs/gogs/",
-		},
-		{
-			ApiUrl:   "https://api.github.com/repos/macaron-contrib/docs/git/trees/master?recursive=1&" + setting.GithubCred,
-			RawUrl:   "https://raw.github.com/macaron-contrib/docs/master/",
-			TreeName: "conf/docTree_macaron.json",
-			Prefix:   "docs/macaron/",
-		},
+	trees := make([]*tree, len(setting.Apps))
+	for i, app := range setting.Apps {
+		trees[i] = &tree{
+			ApiUrl:   "https://api.github.com/repos/" + app.RepoName + "/git/trees/master?recursive=1&" + setting.GithubCred,
+			RawUrl:   "https://raw.github.com/" + app.RepoName + "/master/",
+			TreeName: "conf/docTree_" + app.Name + ".json",
+			Prefix:   "docs/" + app.Name + "/",
+		}
 	}
+	// var trees = []*tree{
+	// 	{
+	// 		ApiUrl:   "https://api.github.com/repos/gogits/docs/git/trees/master?recursive=1&" + setting.GithubCred,
+	// 		RawUrl:   "https://raw.github.com/gogits/docs/master/",
+	// 		TreeName: "conf/docTree_gogs.json",
+	// 		Prefix:   "docs/gogs/",
+	// 	},
+	// 	{
+	// 		ApiUrl:   "https://api.github.com/repos/macaron-contrib/docs/git/trees/master?recursive=1&" + setting.GithubCred,
+	// 		RawUrl:   "https://raw.github.com/macaron-contrib/docs/master/",
+	// 		TreeName: "conf/docTree_macaron.json",
+	// 		Prefix:   "docs/macaron/",
+	// 	},
+	// }
 
 	for _, tree := range trees {
 		var tmpTree struct {
@@ -399,9 +407,9 @@ func checkFileUpdates() {
 	}
 
 	log.Debug("Finish check file updates")
-	for _, name := range setting.Apps {
-		parseDocs(name)
-		initDocMap(name)
+	for _, app := range setting.Apps {
+		parseDocs(app.Name)
+		initDocMap(app.Name)
 	}
 }
 
