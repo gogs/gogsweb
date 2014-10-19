@@ -131,6 +131,7 @@ func needCheckUpdate() bool {
 }
 
 func initDocMap(name string) {
+	docTrees[name] = &docTree{}
 	treeName := "conf/docTree_" + name + ".json"
 	isConfExist := com.IsFile(treeName)
 	if isConfExist {
@@ -142,7 +143,6 @@ func initDocMap(name string) {
 		defer f.Close()
 
 		d := json.NewDecoder(f)
-		docTrees[name] = &docTree{}
 		if err = d.Decode(docTrees[name]); err != nil {
 			log.Error("Fail to decode '%s': %v", treeName, err)
 			return
