@@ -16,6 +16,7 @@
 package models
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"os"
@@ -29,7 +30,7 @@ import (
 	"github.com/Unknwon/goconfig"
 	"github.com/Unknwon/macaron"
 	"github.com/robfig/cron"
-	"github.com/slene/blackfriday"
+	"github.com/russross/blackfriday"
 
 	"github.com/gogits/gogsweb/modules/log"
 	"github.com/gogits/gogsweb/modules/setting"
@@ -74,7 +75,7 @@ func InitModels() {
 		initDocMap(app.Name)
 	}
 
-	return
+	// return
 
 	c := cron.New()
 	c.AddFunc("0 */5 * * * *", checkFileUpdates)
@@ -187,16 +188,33 @@ func loadFile(filePath string) ([]byte, error) {
 	return d, nil
 }
 
+type CustomRender struct {
+	blackfriday.Renderer
+}
+
+var (
+	tab    = []byte("\t")
+	spaces = []byte("    ")
+)
+
+func (cr *CustomRender) BlockCode(out *bytes.Buffer, text []byte, lang string) {
+	var tmp bytes.Buffer
+	cr.Renderer.BlockCode(&tmp, text, lang)
+	out.Write(bytes.Replace(tmp.Bytes(), tab, spaces, -1))
+}
+
 func markdown(raw []byte) []byte {
 	htmlFlags := 0
 	htmlFlags |= blackfriday.HTML_USE_XHTML
 	htmlFlags |= blackfriday.HTML_USE_SMARTYPANTS
 	htmlFlags |= blackfriday.HTML_SMARTYPANTS_FRACTIONS
 	htmlFlags |= blackfriday.HTML_SMARTYPANTS_LATEX_DASHES
-	htmlFlags |= blackfriday.HTML_GITHUB_BLOCKCODE
 	htmlFlags |= blackfriday.HTML_OMIT_CONTENTS
 	htmlFlags |= blackfriday.HTML_COMPLETE_PAGE
-	renderer := blackfriday.HtmlRenderer(htmlFlags, "", "")
+
+	renderer := &CustomRender{
+		Renderer: blackfriday.HtmlRenderer(htmlFlags, "", ""),
+	}
 
 	// set up the parser
 	extensions := 0
