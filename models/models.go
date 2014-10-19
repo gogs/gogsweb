@@ -46,10 +46,12 @@ type oldDocNode struct {
 	Type string
 }
 
-// docTree descriables a documentation file structure tree.
-var docTree struct {
+// docTrees descriables a documentation file structure tree.
+type docTree struct {
 	Tree []oldDocNode
 }
+
+var docTrees = map[string]*docTree{}
 
 var productTree struct {
 	Tree []oldDocNode
@@ -140,13 +142,14 @@ func initDocMap(name string) {
 		defer f.Close()
 
 		d := json.NewDecoder(f)
-		if err = d.Decode(&docTree); err != nil {
+		docTrees[name] = &docTree{}
+		if err = d.Decode(docTrees[name]); err != nil {
 			log.Error("Fail to decode '%s': %v", treeName, err)
 			return
 		}
 	} else {
 		// Generate 'docTree'.
-		docTree.Tree = append(docTree.Tree, oldDocNode{Path: ""})
+		docTrees[name].Tree = append(docTrees[name].Tree, oldDocNode{Path: ""})
 	}
 
 	docLock.Lock()
@@ -156,7 +159,7 @@ func initDocMap(name string) {
 
 	for _, l := range setting.Langs {
 		os.MkdirAll(path.Join("docs", name, l), os.ModePerm)
-		for _, v := range docTree.Tree {
+		for _, v := range docTrees[name].Tree {
 			var fullName string
 			if isConfExist {
 				fullName = v.Path
@@ -309,12 +312,13 @@ func checkFileUpdates() {
 	log.Debug("Checking file updates")
 
 	type tree struct {
-		ApiUrl, RawUrl, TreeName, Prefix string
+		AppName, ApiUrl, RawUrl, TreeName, Prefix string
 	}
 
 	trees := make([]*tree, len(setting.Apps))
 	for i, app := range setting.Apps {
 		trees[i] = &tree{
+			AppName:  app.Name,
 			ApiUrl:   "https://api.github.com/repos/" + app.RepoName + "/git/trees/master?recursive=1&" + setting.GithubCred,
 			RawUrl:   "https://raw.github.com/" + app.RepoName + "/master/",
 			TreeName: "conf/docTree_" + app.Name + ".json",
@@ -364,7 +368,7 @@ func checkFileUpdates() {
 
 			name := strings.TrimSuffix(node.Path, ".md")
 
-			if checkSHA(name, node.Sha, tree.Prefix) {
+			if checkSHA(tree.AppName, name, node.Sha, tree.Prefix) {
 				log.Info("Need to update: %s", name)
 				files = append(files, &rawFile{
 					name:   name,
@@ -432,13 +436,11 @@ func checkFileUpdates() {
 }
 
 // checkSHA returns true if the documentation file need to update.
-func checkSHA(name, sha, prefix string) bool {
-	var tree struct {
-		Tree []oldDocNode
-	}
+func checkSHA(app, name, sha, prefix string) bool {
+	var tree docTree
 
 	if strings.HasPrefix(prefix, "docs/") {
-		tree = docTree
+		tree = *docTrees[app]
 	}
 
 	for _, v := range tree.Tree {
