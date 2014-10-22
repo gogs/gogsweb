@@ -1,7 +1,7 @@
 <nav class="nav-macaron" {{if not .IsPageHome}}style="text-align: left;"{{end}}>
 	<div class="grid-container">
 		<div class="grid-100">
-			<img src="/imgs/macaron.png" id="logo" {{if not .IsPageHome}}style="display: inline;"{{end}}>
+			<a href="https://github.com/Unknwon/macaron" style="padding: 0"><img src="/imgs/macaron.png" id="logo" {{if not .IsPageHome}}style="display: inline;"{{end}}></a>
 			<a href="javascript:" id="menu-link"><i class="fa fa-bars"></i> {{.i18n.Tr "menu"}}</a>
 			<select size="1" id="lang">
 				{{range .AllLangs}}
