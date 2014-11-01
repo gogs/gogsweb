@@ -8,3 +8,5 @@ docs/
 .idea/
 .sass-cache
 conf/custom.ini
+gogsweb.sublime-project
+gogsweb.sublime-workspace
