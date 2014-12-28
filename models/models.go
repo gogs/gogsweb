@@ -53,10 +53,6 @@ type docTree struct {
 
 var docTrees = map[string]*docTree{}
 
-var productTree struct {
-	Tree []oldDocNode
-}
-
 type docFile struct {
 	Title string
 	Data  []byte
@@ -77,7 +73,9 @@ func InitModels() {
 		initDocMap(app.Name)
 	}
 
-	// return
+	if macaron.Env == macaron.DEV {
+		return
+	}
 
 	c := cron.New()
 	c.AddFunc("0 */5 * * * *", checkFileUpdates)
@@ -325,20 +323,6 @@ func checkFileUpdates() {
 			Prefix:   "docs/" + app.Name + "/",
 		}
 	}
-	// var trees = []*tree{
-	// 	{
-	// 		ApiUrl:   "https://api.github.com/repos/gogits/docs/git/trees/master?recursive=1&" + setting.GithubCred,
-	// 		RawUrl:   "https://raw.github.com/gogits/docs/master/",
-	// 		TreeName: "conf/docTree_gogs.json",
-	// 		Prefix:   "docs/gogs/",
-	// 	},
-	// 	{
-	// 		ApiUrl:   "https://api.github.com/repos/macaron-contrib/docs/git/trees/master?recursive=1&" + setting.GithubCred,
-	// 		RawUrl:   "https://raw.github.com/macaron-contrib/docs/master/",
-	// 		TreeName: "conf/docTree_macaron.json",
-	// 		Prefix:   "docs/macaron/",
-	// 	},
-	// }
 
 	for _, tree := range trees {
 		var tmpTree struct {
