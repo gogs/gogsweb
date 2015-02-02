@@ -32,7 +32,7 @@ import (
 	"github.com/gogits/gogsweb/routers"
 )
 
-const APP_VER = "0.2.6.1218"
+const APP_VER = "0.2.7.0202"
 
 var funcMap = map[string]interface{}{
 	"dict":     base.Dict,
