@@ -5,7 +5,7 @@
 			<a href="javascript:" id="menu-link"><i class="fa fa-bars"></i> {{.i18n.Tr "menu"}}</a>
 			<select size="1" id="lang">
 				{{range .AllLangs}}
-				<option value="{{$.Link}}?lang={{.Lang}}" {{if eq .Lang $.i18n.Lang}}selected{{end}}>{{.Name}}</option>
+				<option value="{{$.Link}}/?lang={{.Lang}}" {{if eq .Lang $.i18n.Lang}}selected{{end}}>{{.Name}}</option>
 				{{end}}
 			</select>
 
