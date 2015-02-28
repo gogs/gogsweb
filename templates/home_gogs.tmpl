@@ -23,49 +23,26 @@
 
 	<section>
 		<div class="grid-container">
-            {{if eq .i18n.Lang "zh-CN"}}
 			<div class="grid-25 points">
 				<i class="fa fa-magic"></i>
-				<b>易安装</b>
-				<p>您除了可以根据操作系统平台通过 <a href="/docs/installation/install_from_binary.html">二进制运行</a>，还可以通过 <a href="https://github.com/gogits/gogs/tree/master/docker">Docker</a> 或 <a href="https://github.com/geerlingguy/ansible-vagrant-examples/tree/master/gogs">Vagrant</a>，以及 <a href="/docs/installation/install_from_packages.html">包管理</a> 安装。</p>
+				<b>{{.i18n.Tr "easy_install"}}</b>
+				<p>{{.i18n.Tr "easy_install_desc" | str2html}}</p>
 			</div>
 			<div class="grid-25 points">
 				<i class="fa fa-laptop"></i>
-				<b>跨平台</b>
-				<p>任何 <a href="http://golang.org/">Go 语言</a> 支持的平台都可以运行 Gogs，包括 Windows、Mac、Linux 以及 ARM。</p>
+				<b>{{.i18n.Tr "cross_platform"}}</b>
+				<p>{{.i18n.Tr "cross_platform_desc" | str2html}}</p>
 			</div>
 			<div class="grid-25 points">
 				<i class="fa fa-send-o"></i>
-				<b>轻量级</b>
-				<p>一个廉价的树莓派的配置足以满足 Gogs 的最低系统硬件要求。</p>
+				<b>{{.i18n.Tr "lightweight"}}</b>
+				<p>{{.i18n.Tr "lightweight_desc" | str2html}}</p>
 			</div>
 			<div class="grid-25 points">
 				<i class="fa fa-code"></i>
-				<b>开源化</b>
-				<p>所有的代码都开源在 <a href="https://github.com/gogits/gogs/">GitHub</a> 上，赶快加入我们来共同发展这个伟大的项目！</p>
+				<b>{{.i18n.Tr "opensource"}}</b>
+				<p>{{.i18n.Tr "opensource_desc" | str2html}}</p>
 			</div>
-            {{else}}
-			<div class="grid-25 points">
-				<i class="fa fa-magic"></i>
-				<b>Easy to install</b>
-				<p>Simply <a href="/docs/installation/install_from_binary.html">run the binary</a> for your platform. Or ship Gogs with <a href="https://github.com/gogits/gogs/tree/master/docker">Docker</a> or <a href="https://github.com/geerlingguy/ansible-vagrant-examples/tree/master/gogs">Vagrant</a>, or get it <a href="/docs/installation/install_from_packages.html">packaged</a>.</p>
-			</div>
-			<div class="grid-25 points">
-				<i class="fa fa-laptop"></i>
-				<b>Cross-platform</b>
-				<p>Gogs runs anywhere <a href="http://golang.org/">Go</a> can compile for: Windows, Mac, Linux, ARM, etc.</p>
-			</div>
-			<div class="grid-25 points">
-				<i class="fa fa-send-o"></i>
-				<b>Lightweight</b>
-				<p>Gogs has low minimal requirements and can run on an inexpensive Raspberry Pi.</p>
-			</div>
-			<div class="grid-25 points">
-				<i class="fa fa-code"></i>
-				<b>Open Source</b>
-				<p>It's all on <a href="https://github.com/gogits/gogs/">GitHub</a>! Join us by contributing to make this project even better.</p>
-			</div>
-			{{end}}
 		</div>
 	</section>
 
@@ -100,19 +77,11 @@
 			</div>
 			<div class="grid-50">
 				<ul>
-                    {{if eq .i18n.Lang "zh-CN"}}
-                        <li><i class="icon-angle-right"></i> <a href="/docs/intro/faqs.html">常见问题</a></li>
-                        <li><i class="icon-angle-right"></i> <a href="/docs/intro/known_issues.html">已知问题</a></li>
-                        <li><i class="icon-angle-right"></i> <a href="/docs/intro/troubleshooting.html">故障排查</a></li>
-                        <li><i class="icon-angle-right"></i> <a href="/docs/advanced/configuration_cheat_sheet.html">配置文件手册</a></li>
-                        <li><i class="icon-angle-right"></i> <a href="/docs/advanced/release_and_tips_blogs.html">公告与高阶指南</a></li>
-                    {{else}}
-                        <li><i class="icon-angle-right"></i> <a href="/docs/intro/faqs.html">FAQs</a></li>
-                        <li><i class="icon-angle-right"></i> <a href="/docs/intro/known_issues.html">Known issues</a></li>
-                        <li><i class="icon-angle-right"></i> <a href="/docs/intro/troubleshooting.html">Troubleshooting</a></li>
-                        <li><i class="icon-angle-right"></i> <a href="/docs/advanced/configuration_cheat_sheet.html">Configuration Cheat Sheet</a></li>
-                        <li><i class="icon-angle-right"></i> <a href="/docs/advanced/release_and_tips_blogs.html">Release notes and tips</a></li>
-                    {{end}}
+                    <li><i class="icon-angle-right"></i> <a href="/docs/intro/faqs.html">{{.i18n.Tr "faq"}}</a></li>
+                    <li><i class="icon-angle-right"></i> <a href="/docs/intro/known_issues.html">{{.i18n.Tr "known_issues"}}</a></li>
+                    <li><i class="icon-angle-right"></i> <a href="/docs/intro/troubleshooting.html">{{.i18n.Tr "troubleshooting"}}</a></li>
+                    <li><i class="icon-angle-right"></i> <a href="/docs/advanced/configuration_cheat_sheet.html">{{.i18n.Tr "cheat_sheet"}}</a></li>
+                    <li><i class="icon-angle-right"></i> <a href="/docs/advanced/release_and_tips_blogs.html">{{.i18n.Tr "release_notes"}}</a></li>
 				</ul>
 			</div>
 		</div>
