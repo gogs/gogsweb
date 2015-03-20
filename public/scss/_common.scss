@@ -272,11 +272,11 @@ input[type=button]:hover {
     clear: both;
 }
 code {
-    font-family: 'Menlo', 'Monaco', monospace;
-    padding: 2px 5px;
-    border: 1px solid #DDD;
-    background: #F2F2F2;
-    border-radius: 5px;
+    font-size: 13px;
+    font-family: 'Monaco', monospace;
+    padding: 3px 5px;
+    background-color: rgba(0,0,0,0.05);
+    border-radius: 3px;
 }
 ul,
 ol {
