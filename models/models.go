@@ -21,13 +21,11 @@ import (
 	"errors"
 	"os"
 	"path"
-	"strconv"
 	"strings"
 	"sync"
 	"time"
 
 	"github.com/Unknwon/com"
-	"github.com/Unknwon/goconfig"
 	"github.com/Unknwon/macaron"
 	"github.com/robfig/cron"
 	"github.com/russross/blackfriday"
@@ -83,8 +81,10 @@ func InitModels() {
 
 	if needCheckUpdate() {
 		checkFileUpdates()
-		setting.Cfg.SetValue("app", "update_check_time", strconv.Itoa(int(time.Now().Unix())))
-		goconfig.SaveConfigFile(setting.Cfg, setting.CFG_CUSTOM_PATH)
+		setting.Cfg.Section("app").Key("update_check_time").SetValue(com.ToStr(time.Now().Unix()))
+		if err := setting.Cfg.SaveTo(setting.CFG_CUSTOM_PATH); err != nil {
+			log.Error("Fail to save settings: %v", err)
+		}
 	}
 }
 
@@ -114,7 +114,7 @@ func parseDocs(name string) {
 
 func needCheckUpdate() bool {
 	// Does not have record for check update.
-	stamp, err := setting.Cfg.Int64("app", "update_check_time")
+	stamp, err := setting.Cfg.Section("app").Key("update_check_time").Int64()
 	if err != nil {
 		return true
 	}
@@ -233,7 +233,8 @@ func markdown(raw []byte) []byte {
 }
 
 func getFile(filePath string) *docFile {
-	if strings.Contains(filePath, "images") {
+	if strings.Contains(filePath, "images") ||
+		len(strings.Split(filePath, "/")) <= 3 {
 		return nil
 	}
 

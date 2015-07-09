@@ -18,8 +18,8 @@ import (
 	"fmt"
 
 	"github.com/Unknwon/com"
-	"github.com/Unknwon/goconfig"
 	"github.com/Unknwon/macaron"
+	"gopkg.in/ini.v1"
 )
 
 const (
@@ -33,7 +33,7 @@ type App struct {
 }
 
 var (
-	Cfg *goconfig.ConfigFile
+	Cfg *ini.File
 
 	Apps         []App
 	HttpPort     int
@@ -50,32 +50,33 @@ func setGithubCredentials(id, secret string) {
 
 func init() {
 	var err error
-	Cfg, err = goconfig.LoadConfigFile(CFG_PATH)
+	Cfg, err = ini.Load(CFG_PATH)
 	if err != nil {
 		panic(fmt.Errorf("fail to load config file '%s': %v", CFG_PATH, err))
 	}
 	if com.IsFile(CFG_CUSTOM_PATH) {
-		if err = Cfg.AppendFiles(CFG_CUSTOM_PATH); err != nil {
+		if err = Cfg.Append(CFG_CUSTOM_PATH); err != nil {
 			panic(fmt.Errorf("fail to load config file '%s': %v", CFG_CUSTOM_PATH, err))
 		}
 	}
 
-	appNames := Cfg.MustValueArray("", "apps", ",")
+	appNames := Cfg.Section("").Key("apps").Strings(",")
 	Apps = make([]App, len(appNames))
 	for i, name := range appNames {
-		Apps[i] = App{name, Cfg.MustValue(name, "repo_name")}
+		Apps[i] = App{name, Cfg.Section(name).Key("repo_name").String()}
 	}
 
-	if Cfg.MustValue("app", "run_mode", "dev") == "prod" {
+	sec := Cfg.Section("app")
+	if sec.Key("run_mode").MustString("dev") == "prod" {
 		macaron.Env = macaron.PROD
 	}
-	HttpPort = Cfg.MustInt("app", "http_port", 8091)
-	Https = Cfg.MustBool("app", "https")
-	HttpsCert = Cfg.MustValue("app", "https_cert")
-	HttpsKey = Cfg.MustValue("app", "https_key")
+	HttpPort = sec.Key("http_port").MustInt(8091)
+	Https = sec.Key("https").MustBool()
+	HttpsCert = sec.Key("https_cert").String()
+	HttpsKey = sec.Key("https_key").String()
 
-	Langs = Cfg.MustValueArray("i18n", "langs", ",")
-	Names = Cfg.MustValueArray("i18n", "names", ",")
+	Langs = Cfg.Section("i18n").Key("langs").Strings(",")
+	Names = Cfg.Section("i18n").Key("names").Strings(",")
 
-	setGithubCredentials(Cfg.MustValue("github", "client_id"), Cfg.MustValue("github", "client_secret"))
+	setGithubCredentials(Cfg.Section("github").Key("client_id").String(), Cfg.Section("github").Key("client_secret").String())
 }
