@@ -55,8 +55,7 @@ func Donate(ctx *macaron.Context, locale i18n.Locale) {
 func docs(ctx *macaron.Context, locale i18n.Locale, name string) {
 	docRoot := models.GetDocByLocale(name, locale.Lang)
 	if docRoot == nil {
-		ctx.Error(404)
-		return
+		docRoot = models.GetDocByLocale(name, "en-US")
 	}
 
 	link := strings.TrimPrefix(ctx.Params("*"), "/")
