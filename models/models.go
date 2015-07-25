@@ -93,22 +93,15 @@ func parseDocs(name string) {
 		docs[name] = make(map[string]*DocRoot)
 	}
 
-	root, err := ParseDocs(path.Join("docs", name, "zh-CN"))
-	if err != nil {
-		log.Error("Fail to parse docs: %v", err)
-	}
+	for _, lang := range setting.Langs {
+		root, err := ParseDocs(path.Join("docs", name, lang))
+		if err != nil {
+			log.Error("Fail to parse docs: %v", err)
+		}
 
-	if root != nil {
-		docs[name]["zh-CN"] = root
-	}
-
-	root, err = ParseDocs(path.Join("docs", name, "en-US"))
-	if err != nil {
-		log.Error("Fail to parse docs: %v", err)
-	}
-
-	if root != nil {
-		docs[name]["en-US"] = root
+		if root != nil {
+			docs[name][lang] = root
+		}
 	}
 }
 
