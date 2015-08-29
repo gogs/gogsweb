@@ -31,20 +31,6 @@ func GogsHome(ctx *macaron.Context) {
 	ctx.HTML(200, "home_gogs", ctx.Data)
 }
 
-func About(ctx *macaron.Context, locale i18n.Locale) {
-	ctx.Data["Link"] = "/about"
-	df := models.GetDoc("gogs", "about", locale.Lang)
-	ctx.Data["Data"] = string(df.Data)
-	ctx.HTML(200, "page", ctx.Data)
-}
-
-func Team(ctx *macaron.Context, locale i18n.Locale) {
-	ctx.Data["Link"] = "/team"
-	df := models.GetDoc("gogs", "team", locale.Lang)
-	ctx.Data["Data"] = string(df.Data)
-	ctx.HTML(200, "page", ctx.Data)
-}
-
 func Donate(ctx *macaron.Context, locale i18n.Locale) {
 	ctx.Data["Link"] = "/donate"
 	df := models.GetDoc("gogs", "donate", locale.Lang)

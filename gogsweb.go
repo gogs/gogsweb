@@ -57,8 +57,6 @@ func newGogsInstance() *macaron.Macaron {
 	m.Get("/docs", routers.GogsDocs)
 	m.Get("/docs/images/:all", routers.GogsStatic)
 	m.Get("/docs/*", routers.GogsDocs)
-	m.Get("/about", routers.About)
-	m.Get("/team", routers.Team)
 	m.Get("/donate", routers.Donate)
 
 	return m
